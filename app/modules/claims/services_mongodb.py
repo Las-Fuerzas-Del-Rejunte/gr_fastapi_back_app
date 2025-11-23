@@ -253,12 +253,62 @@ class ClaimService:
                 nuevo_str = str(value) if value else None
                 
                 if anterior_str != nuevo_str:
-                    cambios_importantes.append({
+                    # Construir objeto de cambio con nombres legibles
+                    cambio = {
                         "campo": field,
                         "valor_anterior": anterior_str,
                         "valor_nuevo": nuevo_str
-                    })
-                    print(f"   📝 Cambio detectado en {field}: {anterior_str} → {nuevo_str}")
+                    }
+                    
+                    # Obtener nombres legibles para estados
+                    if field == 'estado_id':
+                        if valor_anterior:
+                            try:
+                                estado_ant = await ConfiguracionEstado.get(valor_anterior)
+                                cambio["nombre_anterior"] = estado_ant.nombre if estado_ant else None
+                            except:
+                                cambio["nombre_anterior"] = None
+                        else:
+                            cambio["nombre_anterior"] = None
+                            
+                        if value:
+                            try:
+                                estado_nuevo = await ConfiguracionEstado.get(value)
+                                cambio["nombre_nuevo"] = estado_nuevo.nombre if estado_nuevo else None
+                            except:
+                                cambio["nombre_nuevo"] = None
+                        else:
+                            cambio["nombre_nuevo"] = None
+                    
+                    # Obtener nombres legibles para sub-estados
+                    elif field == 'sub_estado_id':
+                        if valor_anterior:
+                            try:
+                                from app.modules.claims.models_mongodb import SubEstado
+                                sub_ant = await SubEstado.get(valor_anterior)
+                                cambio["nombre_anterior"] = sub_ant.nombre if sub_ant else None
+                            except:
+                                cambio["nombre_anterior"] = None
+                        else:
+                            cambio["nombre_anterior"] = None
+                            
+                        if value:
+                            try:
+                                from app.modules.claims.models_mongodb import SubEstado
+                                sub_nuevo = await SubEstado.get(value)
+                                cambio["nombre_nuevo"] = sub_nuevo.nombre if sub_nuevo else None
+                            except:
+                                cambio["nombre_nuevo"] = None
+                        else:
+                            cambio["nombre_nuevo"] = None
+                    
+                    # Para prioridad, el valor ya es legible (low, medium, high, critical)
+                    elif field == 'prioridad':
+                        cambio["nombre_anterior"] = anterior_str
+                        cambio["nombre_nuevo"] = nuevo_str
+                    
+                    cambios_importantes.append(cambio)
+                    print(f"   📝 Cambio detectado en {field}: {cambio.get('nombre_anterior', anterior_str)} → {cambio.get('nombre_nuevo', nuevo_str)}")
                     
                     # Si cambió el estado, verificar si es un estado final para actualizar resuelto_en
                     if field == 'estado_id' and value:

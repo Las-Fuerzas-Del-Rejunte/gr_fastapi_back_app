@@ -3,7 +3,7 @@ Schemas de Usuario - Adaptados para MongoDB/Beanie
 """
 from typing import Optional, Literal
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from pydantic import BaseModel, EmailStr, Field, ConfigDict, field_validator
 from bson import ObjectId
 
 
@@ -56,10 +56,23 @@ class UsuarioBase(BaseModel):
 class UsuarioCrear(UsuarioBase):
     """Schema para crear usuario"""
     contrasena: str = Field(
-        min_length=8,
+        min_length=6,
         max_length=100,
-        description="Contraseña (mínimo 8 caracteres)"
+        description="Contraseña (mínimo 6 caracteres)"
     )
+    
+    model_config = ConfigDict(
+        str_strip_whitespace=True,  # Limpia espacios en blanco
+        populate_by_name=True,
+    )
+    
+    @field_validator('telefono', 'departamento', 'posicion', 'area', mode='before')
+    @classmethod
+    def empty_str_to_none(cls, v):
+        """Convierte strings vacíos a None"""
+        if v == "" or (isinstance(v, str) and not v.strip()):
+            return None
+        return v
 
 
 class UsuarioActualizar(BaseModel):

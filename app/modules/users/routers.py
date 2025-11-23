@@ -101,6 +101,27 @@ async def crear_usuario(
         )
 
 
+@router.post("/crearUsuarioRol", response_model=UsuarioRespuesta, status_code=status.HTTP_201_CREATED)
+async def crear_usuario_con_rol(
+    datos_usuario: UsuarioCrear,
+    usuario_actual = Depends(require_role("admin")),
+):
+    """
+    Crear nuevo usuario con rol específico.
+    
+    Endpoint alternativo para compatibilidad con frontend.
+    Requiere rol de administrador.
+    """
+    try:
+        usuario = await UserService.create_user(datos_usuario)
+        return usuario.model_dump(by_alias=True)
+    except DuplicateException as e:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=str(e)
+        )
+
+
 @router.patch("/{usuario_id}", response_model=UsuarioRespuesta)
 async def actualizar_usuario(
     usuario_id: str,
