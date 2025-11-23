@@ -1,0 +1,2 @@
+.venv\Scripts\activate
+uv run uvicorn main:app --reload --port 8000
