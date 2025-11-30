@@ -11,7 +11,7 @@ from app.modules.users.schemas_mongodb import (
     UsuarioActualizar,
     UsuarioCambiarContrasena,
 )
-from app.modules.users.services import UserService
+from app.modules.users.services_mongodb import UserServiceMongoDB as UserService
 from app.modules.auth.dependencies import get_current_user, require_role
 from app.core.exceptions import UserNotFoundException, DuplicateException
 

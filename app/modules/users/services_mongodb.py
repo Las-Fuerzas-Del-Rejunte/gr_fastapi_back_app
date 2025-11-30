@@ -9,8 +9,12 @@ from bson import ObjectId
 # Modelos MongoDB
 from app.modules.users.models_mongodb import Usuario
 
-# Schemas Pydantic (se mantienen iguales)
-from app.modules.users.schemas import UserCreate, UserUpdate, UserResponse
+# Schemas Pydantic MongoDB
+from app.modules.users.schemas_mongodb import (
+    UsuarioCrear as UserCreate,
+    UsuarioActualizar as UserUpdate,
+    UsuarioRespuesta as UserResponse
+)
 
 # Excepciones
 from fastapi import HTTPException, status

@@ -15,10 +15,13 @@ from app.core.mongodb_connection import connect_to_mongodb, close_mongodb_connec
 # Routers
 from app.modules.auth.routers import router as auth_router
 from app.modules.users.routers import router as users_router
-from app.modules.claims.routers import router as claims_router
-from app.modules.clients.routers import router as clients_router
-from app.modules.status.routers import router as status_router
-from app.modules.notes.routers import router as notes_router
+from app.modules.claims.routers_mongodb import router as claims_router
+from app.modules.clients.routers_mongodb import (
+    router_clientes as clients_router,
+    router_tipos_proyecto,
+    router_proyectos
+)
+from app.modules.status.routers_mongodb import router as status_router
 
 settings = Settings()
 
@@ -83,32 +86,38 @@ app.include_router(
 
 app.include_router(
     users_router,
-    prefix=f"{settings.API_V1_PREFIX}/users",
+    prefix=f"{settings.API_V1_PREFIX}",
     tags=["Usuarios"]
 )
 
 app.include_router(
     claims_router,
-    prefix=f"{settings.API_V1_PREFIX}/claims",
+    prefix=f"{settings.API_V1_PREFIX}",
     tags=["Reclamos"]
 )
 
 app.include_router(
     clients_router,
-    prefix=f"{settings.API_V1_PREFIX}/clients",
+    prefix=f"{settings.API_V1_PREFIX}",
     tags=["Clientes"]
 )
 
 app.include_router(
-    status_router,
-    prefix=f"{settings.API_V1_PREFIX}/status",
-    tags=["Estados"]
+    router_tipos_proyecto,
+    prefix=f"{settings.API_V1_PREFIX}",
+    tags=["Tipos de Proyecto"]
 )
 
 app.include_router(
-    notes_router,
-    prefix=f"{settings.API_V1_PREFIX}/notes",
-    tags=["Notas"]
+    router_proyectos,
+    prefix=f"{settings.API_V1_PREFIX}",
+    tags=["Proyectos"]
+)
+
+app.include_router(
+    status_router,
+    prefix=f"{settings.API_V1_PREFIX}",
+    tags=["Estados"]
 )
 
 # ========================================

@@ -1,0 +1,7 @@
+
+[run]
+omit =
+    app/modules/claims/routers_mongodb.py
+    app/modules/claims/services_mongodb.py
+    app/modules/clients/routers_mongodb.py
+    app/modules/clients/services.py
